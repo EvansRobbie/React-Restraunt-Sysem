@@ -37,8 +37,8 @@ const Pizza = () => {
                         </div>
                         <div className='absolute  w-full h-full group-hover:bg-black/60 rounded-xl text-white bg-transparent top-0 left-0 duration-300'/>
                         <div className='px-2 left-0 absolute opacity-0 group-hover:opacity-100
-                                transition-all duration-300 -bottom-11 group-hover:bottom-6 z-10 pb-5'>
-                            <p className='font-semibold leading-[1.3] text-gray-300'>Toppings:<span className='ml-2 font-bold text-base'>{toppings}</span></p>
+                                transition-all duration-300 -bottom-11 group-hover:bottom-6 z-10 pb-5 break-words max-w-[8rem] md:max-w-[20rem]'>
+                            <p className='font-semibold leading-[1.1]  md:leading-[1.3] text-gray-300'>Toppings:<span className='ml-2 font-bold text-small md:text-base  text-gray-100/80'>{toppings}</span></p>
                         </div>
                         
                         <div>

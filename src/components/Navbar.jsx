@@ -2,10 +2,13 @@ import React, {useState} from 'react'
 import { useGlobalContext } from '../context/GlobalContext'
 import { AiOutlineClose, AiOutlineMenu, AiOutlineSearch} from 'react-icons/ai'
 import { BsFillCartFill}  from 'react-icons/bs'
+import { IoMdClose } from 'react-icons/io'
 
 
 const Navbar = () => {
-    const {isActive, handleOrderSidebar, isClicked,itemQuantity, deliveryPickup, submit,status,setSearch } = useGlobalContext()
+    const {isActive, handleOrderSidebar, isClicked,itemQuantity, deliveryPickup, finishedOrders,setSearch,removeOrder } = useGlobalContext()
+    const {id} = finishedOrders
+        // console.log(startPreparingOrder)
     // console.log(submit[1])
     const [nav, setNav] = useState(false)
     const [completeOrder, setCompleteOrder] = useState(false)
@@ -18,17 +21,25 @@ const Navbar = () => {
     const handleCompleteOrder = () =>{
         setCompleteOrder(!completeOrder)
     }
-    const submitElement = submit?.map((item)=>(
-        <tr key={item.id} className='text-black border-b overflow-hidden'>
-            <td>{item.name}</td>
-            <td>{item.quantity}</td>
-            <td className=' text-green-500'>{status}</td>
-        </tr>))
-    const completeElement = submit?.map((item)=>(
-        <tr key={item.id} className='text-black border-b overflow-hidden'>
-        <td>{item.name}</td>
-        <td>{item.quantity}</td>
-        <td className=' text-green-500'>{26 * item.quantity * submit.length}</td>
+    const submitElement = finishedOrders?.map((item, index)=>{
+        // console.log(item[0].id)
+        return (
+        <tr key={index} className='text-black border-b overflow-hidden'>
+            <td>{item[0]?.name}</td>
+            <td>{item[0]?.quantity}</td>
+            <td className=' text-green-500'>{item.status}</td>
+            <td className='text-xl cursor-pointer' onClick={()=>removeOrder(id)}>
+                <IoMdClose className='text-gray-500 hover:text-orange-500 transition'/>
+            </td>
+        </tr>)})
+    const completeElement = finishedOrders?.map((item, index)=>(
+        <tr key={index} className='text-black border-b overflow-hidden'>
+        <td>{item[0]?.name}</td>
+        <td>{item[0]?.quantity}</td>
+        <td className=' text-green-500'>{item[0]?.timing.total}</td>
+        <td className='text-xl cursor-pointer' onClick={()=>removeOrder(id)}>
+            <IoMdClose className='text-gray-500 hover:text-orange-500 transition'/>
+        </td>
     </tr>))
     
   return (
@@ -37,7 +48,7 @@ const Navbar = () => {
         <div className='flex items-center '>
             <div onClick={handleMenu} className=' cursor-pointer'>
                 <AiOutlineMenu size={30}/>
-                <div className='bg-orange-600 absolute sm:left-10 md:left-16 top-6 text-[12px] w-[18px] h-[18px] text-white rounded-full flex justify-center items-center'>{submit.length}</div>
+                <div className='bg-orange-600 absolute sm:left-10 md:left-16 top-6 text-[12px] w-[18px] h-[18px] text-white rounded-full flex justify-center items-center'>{finishedOrders.length}</div>
             </div>
             <h1 className='capitalize text-2xl sm:text-3xl lg:text-4xl px-2'>Classic <span className='font-bold'>Pizza</span></h1>
             <div className='hidden lg:flex items-center bg-gray-200 rounded-full p-1 text-[14px] ' onClick={deliveryPickup}>
@@ -63,7 +74,7 @@ const Navbar = () => {
         {/* Sidedrawer Menu */}
         <div className= {` ${ nav ? 'left-0' : '-left-full'} fixed left-0 top-0 w-full md:w-[500px]  h-screen bg-white z-10  duration-700 `}>
             <AiOutlineClose onClick={handleMenu} size={25} className= 'text-black absolute right-4 top-4 cursor-pointer' />
-            <h2 className= 'text-black text-2xl p-4'>Submitted<span className=' font-bold'> Order({submit.length})</span></h2>
+            <h2 className= 'text-black text-2xl p-4'>Submitted<span className=' font-bold'> Order({finishedOrders.length})</span></h2>
             {/* <nav>
                 <ul className='text-gray-800 p-4'>
                     <li className=' text-xl py-4 flex'><TbTruckDelivery size={25} className='mr-4'/> Orders</li>
@@ -76,7 +87,7 @@ const Navbar = () => {
                 </ul>
             </nav> */}
             
-                <table className='w-full border-collapse text-center text-black'>
+                <table className='w-full border-collapse text-center text-black '>
                     <thead >
                         <tr className='border-b'>
                         <th>Order name</th>

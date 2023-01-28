@@ -7,7 +7,7 @@ import OrderItems from './OrderItems'
 
 const Orders = () => {
 
-    const {isOpen,handleOrderSidebar, order,total,  clearOrder,itemQuantity,submitOrder,isEmpty} = useGlobalContext()
+    const {isOpen,handleOrderSidebar, order,total, startPreparingOrder, clearOrder,itemQuantity,isEmpty} = useGlobalContext()
     const OrderElement = order.map((item) =>{
         return(
             <OrderItems key={item.id} item = {item}/>
@@ -40,7 +40,8 @@ const Orders = () => {
                 </div>
             </div>
         </div>
-        <div onClick={submitOrder} className='bg-orange-600 p-4 flex justify-center items-center rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 cursor-pointer ease-in duration-300 text-white w-full font-medium'>Checkout</div>
+        {}
+        <div onClick={()=>startPreparingOrder(order)} className='bg-orange-600 p-4 flex justify-center items-center rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 cursor-pointer ease-in duration-300 text-white w-full font-medium'>Submit order</div>
     </div>
     </>
   )

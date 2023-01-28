@@ -16,16 +16,55 @@ const GlobalContextProvider = ({children}) => {
     // total price state
     const [total, setTotal] = useState(0)
     // submit order State
-    const [submit, setSubmit] = useState(JSON.parse(localStorage.getItem('submit')) ||[])
+    const [finishedOrders, setFinishedOrders] = useState(JSON.parse(localStorage.getItem('finishedOrders')) || [])
     const [isSub, setIsSubmit] = useState(false)
-    // status
-    const [status, setStatus] = useState('')
-    // Time taken for order to be completed
-    const [countDown, setCountDown] = useState(26)
     const [isEmpty, setIsEmpty] =useState('No order Items')
     // search State
     const [search, setSearch] = useState('')
-     
+
+  
+const startPreparingOrder = (order) => {
+    const updatedOrder = { ...order, status: 'preparing dough', timing: order[0].timing.dough = 7};
+    // Update the dough timing
+    // console.log(order[0].toppings.split(',').length)
+    setFinishedOrders([...finishedOrders, updatedOrder]);
+    setTimeout(() => {
+      // simulate dough preparation
+      const updatedOrder = { ...order, status: 'preparing toppings', timing:order[0].timing.toppings = 4 * order[0].toppings.length  };
+      setFinishedOrders([...finishedOrders, updatedOrder]);
+      setTimeout(() => {
+        // simulate topping preparation
+        const updatedOrder = { ...order, status: 'cooking in oven', timing:order[0].timing.oven = 10 };
+        setFinishedOrders([...finishedOrders, updatedOrder]);
+        setTimeout(() => {
+          // simulate oven cooking
+          const updatedOrder = { ...order, status: 'serving order' };
+          setFinishedOrders([...finishedOrders, updatedOrder]);
+          setTimeout(() => {
+            // simulate waiter serving
+            const updatedOrder = { ...order, status: 'finished', timing:order[0].timing.total = order[0].timing.dough + order[0].timing.toppings + order[0].timing.oven + 5 };
+            console.log(updatedOrder)
+            setFinishedOrders([...finishedOrders, updatedOrder]);
+            // remove the order from the current orders
+            // setFinishedOrders(finishedOrders.filter((o) => o.id !== order.id));
+            
+          }, 5000);
+        }, 10000);
+      }, 4000 * order[0].toppings.split(',').length);
+    }, 7000);
+    setIsSubmit(!isSub)
+    // setFinishedOrders(order)
+    // setStatus('')
+    setIsEmpty('Order submitted Successfully')
+    setOrder([])
+    toast.success('Order Submitted Succefully')
+  };
+  const removeOrder= (id) =>{
+    const newFinishedOrder = finishedOrders.filter((item) => item.id !==id)
+    setFinishedOrders(newFinishedOrder)
+    
+  }
+ 
     const OrderItem = (pizza, id) =>{
         //  console.log(pizza)
          const newItem = {...pizza, quantity:1}
@@ -79,6 +118,7 @@ const GlobalContextProvider = ({children}) => {
         OrderItem(orderItem, id)
         
     }
+   
     // decrease quantity
    const decreaseQuantity = (id) => {
         const orderItem = order.find((item) => item.id === id)
@@ -102,17 +142,6 @@ const GlobalContextProvider = ({children}) => {
         toast.success('Order Cleared')
     }
 
-    const submitOrder = () =>{
-        setIsSubmit(!isSub)
-        setSubmit(order)
-        setStatus('')
-        setIsEmpty('Order submitted Successfully')
-        setOrder([])
-        toast.success('Order Submitted Succefully')
-        // TotalTime()
-        // console.log(order)
-    }
-    // Update items quantity
     useEffect (()=>{
         if(order){
             const quantity = order.reduce((accumulator, currentItem) =>{
@@ -140,49 +169,9 @@ const GlobalContextProvider = ({children}) => {
 //    Local Storage
     useEffect (() =>{
         localStorage.setItem('order', JSON.stringify(order))
-        localStorage.setItem('submit', JSON.stringify(submit))
-    },[order, submit])
-    // status Effect
-    useEffect(()=>{
-        if(isSub === true && countDown > 0 ){
-            setTimeout(() =>{
-                setCountDown(prevCount => prevCount -1)
-            
-                
-                    submit.map((item) => {
-                        const totalTime = 26 * item.quantity
-                        const doughTime = totalTime- 7 *item.quantity
-                        const toppingTime = doughTime - 4* item.quantity
-                        const ovenTime = toppingTime - 10 * item.quantity
-                        const waiterDelivery = ovenTime - 5* item.quantity
-                        if (countDown <= (totalTime)){
-                            
-                            setStatus('In preparation')
-                            // console.log(countDown)
-                        }if(countDown <= doughTime){
-                            setStatus('adding toppings')
-                            // console.log(countDown)
-                        }
-                         if(countDown <= toppingTime){
-                            
-                            setStatus('Almost There')
-                        }
-                        if(countDown <= waiterDelivery){
-                            // console.log(countDown)
-                            setStatus('Pending Delivery')
-                            }
-                    return countDown
-                }
-                
-                    )
-                
-            },1000)
-        }
-        else if (countDown===0 ){
-            setStatus('order Completed')
-        }
-        
-    },[countDown,isSub, submit])
+        localStorage.setItem('finishedOrders', JSON.stringify(finishedOrders))
+    },[order, finishedOrders])
+   
   return (
     <GlobalContext.Provider value={{isOpen,
     order,
@@ -196,13 +185,14 @@ const GlobalContextProvider = ({children}) => {
     increaseQuantity,
     itemQuantity, 
     removeFromOrders,
-    submitOrder,
-    submit,
-    status,
+    finishedOrders,
     isEmpty,
     search, 
     setSearch,
-    handleDescription
+    handleDescription,
+    startPreparingOrder,
+    statusOrderUpdate,
+    removeOrder
       }}>
         {children}
     </GlobalContext.Provider>
