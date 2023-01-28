@@ -42,8 +42,8 @@ const startPreparingOrder = (order) => {
           setFinishedOrders([...finishedOrders, updatedOrder]);
           setTimeout(() => {
             // simulate waiter serving
-            const updatedOrder = { ...order, status: 'finished', timing:order[0].timing.total = order[0].timing.dough + order[0].timing.toppings + order[0].timing.oven + 5 };
-            console.log(updatedOrder)
+            const updatedOrder = { ...order, status: 'finished', timing:order[0].timing.total = order[0].timing.dough + order[0].timing.toppings + order[0].timing.oven + 5 * order[0].quantity  };
+            // console.log(updatedOrder)
             setFinishedOrders([...finishedOrders, updatedOrder]);
             // remove the order from the current orders
             // setFinishedOrders(finishedOrders.filter((o) => o.id !== order.id));
@@ -191,7 +191,6 @@ const startPreparingOrder = (order) => {
     setSearch,
     handleDescription,
     startPreparingOrder,
-    statusOrderUpdate,
     removeOrder
       }}>
         {children}
